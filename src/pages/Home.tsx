@@ -4,7 +4,7 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
 import { useChat } from "../hooks/useChat";
-import { chatHistory } from "../constants/chatData";
+import { useAppSelector } from "../store/hooks";
 import ChatHeader from "../components/chat/ChatHeader";
 import ChatMessage from "../components/chat/ChatMessage";
 import ChatInput from "../components/chat/ChatInput";
@@ -12,18 +12,31 @@ import ChatSidebar from "../components/chat/ChatSidebar";
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [inputMessage, setInputMessage] = useState("");
   const {
     messages,
-    inputMessage,
-    setInputMessage,
+    isTyping,
     messagesEndRef,
     handleSendMessage,
     handleKeyPress,
     formatTimeStamp,
   } = useChat();
+  const chatHistory = useAppSelector((state) => state.chat.chatHistory);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const onSendMessage = () => {
+    handleSendMessage(inputMessage);
+    setInputMessage("");
+  };
+
+  const onKeyPress = (event: React.KeyboardEvent) => {
+    handleKeyPress(event);
+    if (event.key === "Enter" && !event.shiftKey) {
+      setInputMessage("");
+    }
   };
 
   return (
@@ -152,8 +165,8 @@ const Home = () => {
           <ChatInput
             inputMessage={inputMessage}
             setInputMessage={setInputMessage}
-            handleSendMessage={handleSendMessage}
-            handleKeyPress={handleKeyPress}
+            handleSendMessage={onSendMessage}
+            handleKeyPress={onKeyPress}
           />
         </Box>
       </Box>

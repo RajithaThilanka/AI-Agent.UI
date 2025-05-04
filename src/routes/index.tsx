@@ -11,4 +11,10 @@ export const router = createBrowserRouter([
     path: '/about',
     element: <About />,
   },
-]); 
+]);
+
+const AppRoutes = () => {
+  return router;
+};
+
+export default AppRoutes; 

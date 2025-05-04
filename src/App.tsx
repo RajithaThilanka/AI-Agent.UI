@@ -1,14 +1,18 @@
+import { RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
 import { ThemeProvider } from '@mui/material/styles';
-import { RouterProvider } from 'react-router-dom';
+import { store } from "./store";
+import { router } from "./routes";
 import { theme } from './theme/theme';
-import { router } from './routes';
-import './index.css';
+import "./index.css";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   );
 }
 

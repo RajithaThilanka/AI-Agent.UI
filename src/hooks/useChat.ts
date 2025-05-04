@@ -1,24 +1,28 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  addMessage,
+  setIsTyping,
+  setChatHistory,
+} from "../store/slices/chatSlice";
 import { Message } from "../types/chat";
+import { chatHistory } from "../constants/chatData";
 
 export const useChat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "Hello! I'm your AI assistant. How can I help you today?",
-      sender: "ai",
-      timestamp: new Date(),
-    },
-  ]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const dispatch = useAppDispatch();
+  const messages = useAppSelector((state) => state.chat.messages);
+  const isTyping = useAppSelector((state) => state.chat.isTyping);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = () => {
+  useEffect(() => {
+    dispatch(setChatHistory(chatHistory));
+  }, [dispatch]);
+
+  const handleSendMessage = (inputMessage: string) => {
     if (inputMessage.trim() === "") return;
 
     const newMessage: Message = {
@@ -28,27 +32,27 @@ export const useChat = () => {
       timestamp: new Date(),
     };
 
-    setMessages([...messages, newMessage]);
-    setInputMessage("");
-    setIsTyping(true);
+    dispatch(addMessage(newMessage));
+    dispatch(setIsTyping(true));
 
     // Simulate AI response
     setTimeout(() => {
-      setIsTyping(false);
+      dispatch(setIsTyping(false));
       const aiResponse: Message = {
         id: messages.length + 2,
         text: "I'm processing your request. This is a simulated response.",
         sender: "ai",
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, aiResponse]);
+      dispatch(addMessage(aiResponse));
     }, 1500);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      handleSendMessage();
+      const input = event.currentTarget as HTMLInputElement;
+      handleSendMessage(input.value);
     }
   };
 
@@ -58,8 +62,6 @@ export const useChat = () => {
 
   return {
     messages,
-    inputMessage,
-    setInputMessage,
     isTyping,
     messagesEndRef,
     handleSendMessage,
