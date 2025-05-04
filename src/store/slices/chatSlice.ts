@@ -56,4 +56,4 @@ export const {
   clearMessages,
 } = chatSlice.actions;
 
-export default chatSlice.reducer; 
+export default chatSlice.reducer;

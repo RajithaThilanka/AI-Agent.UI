@@ -10,8 +10,8 @@ import { chatHistory } from "../constants/chatData";
 
 export const useChat = () => {
   const dispatch = useAppDispatch();
-  const messages = useAppSelector((state) => state.chat.messages);
-  const isTyping = useAppSelector((state) => state.chat.isTyping);
+  const messages = useAppSelector((state) => state.chat?.messages ?? []);
+  const isTyping = useAppSelector((state) => state.chat?.isTyping ?? false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
